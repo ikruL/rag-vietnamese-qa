@@ -1,10 +1,13 @@
 
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
+import ollama
 from vectordb import collection, embed_model
 
+MODEL = 'qwen3:4b'
+TEMP = 0.2
 
-model = OllamaLLM(model="qwen3:4b")
+model = OllamaLLM(model=MODEL)
 
 prompt_template = """
 Bạn là trợ lý trả lời câu hỏi chuyên nghiệp dựa trên kho kiến thức được cung cấp. Việc bạn trả lời câu hỏi thật sự rất có ích, giúp người dùng giải quyết vấn đề một cách nhanh chóng và hiệu quả.
@@ -31,8 +34,10 @@ Question: {question}
 prompt = ChatPromptTemplate.from_template(prompt_template)
 chain = prompt | model
 
+print('*' * 80)
+print("\n\nWelcome to RAG VietNamese QA Chatbot !! \n\n")
 while True:
-    question = input("\nQuestion to answer (q to quit): ").strip()
+    question = input("Ask question here (q to quit): ").strip()
     if question.lower() in ['q']:
         print("Bye!")
         break
@@ -41,13 +46,27 @@ while True:
 
     results = collection.query(
         query_embeddings=[query_embedding],
-        n_results=3,
+        n_results=4,
         include=["documents", "metadatas", "distances"],
     )
 
     context = ""
-    if results["documents"][0]:
+    if results.get("documents") and results["documents"][0]:
         context = "\n\n".join(results["documents"][0])
 
-    response = chain.invoke({"context": context, "question": question})
-    print(f"\nResponse: {response}")
+    full_prompt = prompt.format(context=context, question=question)
+
+    stream_res = ollama.chat(
+        model=MODEL,
+        messages=[{"role": "user", "content": full_prompt}
+                  ],
+        stream=True,
+        options={'temperatute': TEMP}
+    )
+
+    print(f"\nResponse: ")
+
+    for chunk in stream_res:
+        if 'message' in chunk and 'content' in chunk['message']:
+            print(chunk['message']['content'], end='', flush=True)
+    print("\n" + "=" * 80)

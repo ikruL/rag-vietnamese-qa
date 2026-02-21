@@ -31,6 +31,9 @@ def load_dataset():
 
     df = df.dropna(subset=["question", "answers"])
 
+    missing = df.isnull().sum()
+
+    print(f'\nChecking data again : \n{missing}')
     return csv_file, df
 
 
@@ -46,7 +49,7 @@ def process_data(df, limit=LIMIT):
         chunk_size=600, chunk_overlap=100)
 
     documents = splitter.create_documents(
-        texts)  # Limit to 500 for testing
+        texts)
 
     return documents, [doc.page_content for doc in documents]
 
@@ -68,7 +71,7 @@ def index_data():
     collection, embed_model = create_or_load_collection()
 
     if collection.count() == 0:
-        print("Indexing data for the first time...")
+        print("\n\nIndexing data for the first time !\n\n")
         csv_file, df = load_dataset()
         documents, chunks = process_data(df)
 
@@ -84,8 +87,9 @@ def index_data():
             metadatas=metadatas,
             documents=chunks,
         )
+        print("\n\nIndex data completed :D :D\n\n")
     else:
-        print("Collection already indexed. Skipping indexing step.")
+        print("\n\nCollection already indexed. Skipping indexing step.\n\n")
     return collection, embed_model
 
 
