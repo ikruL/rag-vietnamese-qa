@@ -4,3 +4,4 @@ langchain_text_splitters
 kagglehub
 chromadb
 pandas
+ollama
