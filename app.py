@@ -1,8 +1,7 @@
 
 import ollama
-from vectordb import collection, embed_model
 import streamlit as st
-
+from vectordb import collection, embed_model
 
 st.set_page_config(
     page_title="RAG Vietnamese QA Chatbot",

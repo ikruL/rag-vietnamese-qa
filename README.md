@@ -10,33 +10,27 @@ In purposes of learning RAG pipelines, local LLM inference, and Vietnamese NLP.
 
 ## Demo
 
-### First run
+![Demo](images/demo.gif)
 
-![First time run](images/first-time-run.png)
+## Select-box for changing Model
 
-### Second run
-
-![Second run](images/second-run.png)
-
-### Streaming response
-
-![Stream response](images/stream.gif)
+![Select-box](images/change-model-select-box.png)
 
 ## Features
 
 - Full RAG pipeline: Load dataset -> Chunking -> Embedding -> Store in ChromaDB -> Retrieve -> Chain -> Generate
 - Good handling of paraphrase / similar questions (via prompt engineering)
 - Embedding with `qwen3-embedding:0.6b`
-- Using `"qwen3:4b` for LLM inference
-- Easy to extend: Change dataset, embedding model, or add conversation memory
+- Using `"qwen3:1.7b", "deepseek-r1", "llama3.2:3b"` for LLM inferences
+- Using `Streamlit` for Web-UI
 
 ## Tech Stack
 
 - **Language**: Python 3.10+
-- **LLM & Embedding**: Ollama (local inference)
-- **Vector Database**: ChromaDB (persistent)
-- **Text splitting**: LangChain RecursiveCharacterTextSplitter
+- **Text splitting**: LangChain
 - **Data processing**: pandas, kagglehub
+- **Vector Database**: ChromaDB (persistent)
+- **LLM & Embedding**: Ollama (local inference)
 
 ## Installation
 
@@ -67,11 +61,16 @@ In purposes of learning RAG pipelines, local LLM inference, and Vietnamese NLP.
       ```bash
       ollama pull qwen3-embedding:0.6b
 
-      ollama pull qwen3:4b
+      ollama pull qwen3:1.7b
+
+      ollama pull deepseek-r1
+
+      ollama pull llama3.2:3b
 
       ollama serve
       ```
-5.  Run the chatbot:
+
+5.  Run the chatbot with Streamlit:
     ```bash
-    python main.py
+    streamlit run app.py
     ```
